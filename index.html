@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance | Management System</title>
     <style>
-        /* Base Styles and Layout (Modern Dashboard Look) */
         :root {
             --primary: #4361ee;
             --bg: #f0f2f5;
@@ -13,7 +12,6 @@
             --text-main: #2b2d42;
             --text-muted: #6c757d;
             --border: #e0e6ed;
-            --success: #2ec4b6;
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -27,7 +25,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
             border-radius: 16px; 
             margin: 20px;
-            position: relative;
         }
 
         .form-title { font-size: 1rem; margin-bottom: 25px; color: var(--text-muted); line-height: 1.4; }
@@ -38,114 +35,98 @@
         input, select { 
             width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; font-size: 0.9rem; background: #fafafa;
         }
-        input:focus, select:focus { outline: none; border-color: var(--primary); background: #fff; }
-        input::placeholder { color: #aaa; font-style: italic; }
+        input:focus { outline: none; border-color: var(--primary); background: #fff; }
 
         .radio-group { display: flex; gap: 20px; margin-top: 5px; }
-        .radio-group label { font-weight: normal; display: flex; align-items: center; margin-bottom: 0; color: var(--text-main); }
+        .radio-group label { font-weight: normal; display: flex; align-items: center; margin-bottom: 0; }
         .radio-group input { margin-right: 8px; width: auto; }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: span 2; }
 
-        button { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 10px; width: 100%; transition: background-color 0.3s; }
-        button:disabled { background: #cccccc; cursor: not-allowed; }
+        button { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.3s; }
+        button:disabled { background: #cccccc; }
     </style>
 </head>
 <body>
 
-    <div class="form-container" id="form-box">
-        <div id="form-content">
-            <h1 style="color: black; margin-bottom: 15px; font-size: 2.2rem;">Attendance System</h1>
-            <p class="form-title">Please fill out all required information below to record attendance.</p>
-            
-            <!-- Updated action to Formspree URL -->
-            <form id="attendanceForm" action="https://formspree.io" method="POST">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="fname">First Name <sup>*</sup></label>
-                        <input type="text" name="first_name" id="fname" placeholder="Enter first name" required>
-                    </div>
+    <div class="form-container">
+        <h1 style="color: black; margin-bottom: 15px; font-size: 2.2rem;">Attendance System</h1>
+        <p class="form-title">Please fill out all required information below to record attendance.</p>
+        
+        <!-- Formspree Integration Starts Here -->
+        <form id="attendanceForm" action="https://formspree.io" method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="fname">First Name <sup>*</sup></label>
+                    <input type="text" name="First Name" id="fname" placeholder="Enter first name" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="lname">Last Name <sup>*</sup></label>
-                        <input type="text" name="last_name" id="lname" placeholder="Enter last name" required>
-                    </div>
+                <div class="form-group">
+                    <label for="lname">Last Name <sup>*</sup></label>
+                    <input type="text" name="Last Name" id="lname" placeholder="Enter last name" required>
+                </div>
 
-                    <div class="form-group full-width">
-                        <label for="email">Email Address <sup>*</sup></label>
-                        <input type="email" name="email" id="email" placeholder="Enter professional email address" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Gender <sup>*</sup></label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="gender" value="male" required> Male</label>
-                            <label><input type="radio" name="gender" value="female"> Female</label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="number" name="age" id="age" placeholder="e.g., 30" min="18">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone">Phone Number <sup>*</sup></label>
-                        <input type="tel" name="phone" id="phone" placeholder="+1 (555) 000-0000" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="id_nbr">ID Number <sup>*</sup></label>
-                        <input type="text" name="id_number" id="id_nbr" placeholder="Enter national ID number" required>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <button type="submit" id="submitBtn">Submit</button>
+                <div class="form-group full-width">
+                    <label for="email">Email Address <sup>*</sup></label>
+                    <input type="email" name="Email" id="email" placeholder="Enter email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Gender <sup>*</sup></label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="Gender" value="Male" required> Male</label>
+                        <label><input type="radio" name="Gender" value="Female"> Female</label>
                     </div>
                 </div>
-            </form>
-        </div>
+
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" name="Age" id="age" placeholder="e.g., 30" min="18">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number <sup>*</sup></label>
+                    <input type="tel" name="Phone" id="phone" placeholder="+1 (555) 000-0000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_nbr">ID Number <sup>*</sup></label>
+                    <input type="text" name="ID Number" id="id_nbr" placeholder="Enter national ID" required>
+                </div>
+                
+                <div class="form-group full-width">
+                    <button type="submit" id="submitBtn">Submit</button>
+                </div>
+            </div>
+        </form>
     </div>
 
     <script>
         const form = document.getElementById("attendanceForm");
-        
-        async function handleSubmit(event) {
-          event.preventDefault();
-          const submitBtn = document.getElementById('submitBtn');
-          const status = document.getElementById("form-content");
-          const data = new FormData(event.target);
-          
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Submitting...';
+        const button = document.getElementById("submitBtn");
 
-          fetch(event.target.action, {
-            method: form.method,
-            body: data,
-            headers: {
-                'Accept': 'application/json'
-            }
-          }).then(response => {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            button.disabled = true;
+            button.textContent = "Sending...";
+
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            });
+
             if (response.ok) {
-              alert("Attended Successfully.");
-              form.reset();
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Submit';
+                alert("Attended Successfully.");
+                form.reset();
             } else {
-              response.json().then(data => {
-                if (Object.hasOwn(data, 'errors')) {
-                  alert(data["errors"].map(error => error["message"]).join(", "));
-                } else {
-                  alert("Oops! There was a problem submitting your form");
-                }
-              })
+                alert("Submission failed. Please try again.");
             }
-          }).catch(error => {
-            alert("Oops! There was a problem submitting your form");
-          });
-        }
-        form.addEventListener("submit", handleSubmit)
+            
+            button.disabled = false;
+            button.textContent = "Submit";
+        });
     </script>
 </body>
 </html>
