@@ -92,23 +92,28 @@
         .side-panel { display: flex; flex-direction: column; gap: 20px; }
         .side-card { background: #1c2128; padding: 20px; border-radius: 15px; border: 1px solid #30363d; }
 
-        /* --- Auth & Overlays --- */
+        /* --- Updated Auth: Translucent Glass Effect --- */
         #auth-overlay, #settings-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); display: flex; justify-content: center; 
+            background: rgba(11, 14, 20, 0.6); /* Reduced opacity to see laboratory */
+            backdrop-filter: blur(8px); /* Blur the background content */
+            display: flex; justify-content: center; 
             align-items: center; z-index: 2000;
         }
 
         .auth-card {
-            background: var(--card-bg); padding: 40px; border-radius: 20px;
-            width: 100%; max-width: 420px; border: 1px solid #30363d;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            background: rgba(22, 27, 34, 0.85); /* Translucent card */
+            backdrop-filter: blur(20px);
+            padding: 40px; border-radius: 20px;
+            width: 100%; max-width: 420px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
         }
 
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         input, select {
             width: 100%; padding: 12px; margin: 8px 0;
-            background: #0d1117; border: 1px solid #30363d;
+            background: rgba(13, 17, 23, 0.8); border: 1px solid #30363d;
             color: white; border-radius: 8px; box-sizing: border-box;
         }
         input:focus { border-color: var(--primary); outline: none; }
@@ -123,7 +128,7 @@
         .btn-danger { background: var(--danger); color: white; }
 
         .hidden { display: none !important; }
-        .blur { filter: blur(15px); pointer-events: none; }
+        .blur { filter: blur(5px); pointer-events: none; } /* Slightly lower blur for better "curiosity" peek */
 
         /* --- Content Cards --- */
         .ai-grid {
@@ -156,15 +161,15 @@
         
         <div style="max-width: 600px; margin: 30px auto; display: flex; gap: 10px; background: #1c2128; padding: 8px; border-radius: 12px; border: 1px solid #30363d;">
             <input type="text" id="yt-search" placeholder="Explore technology (e.g. ROS2, Edge AI)..." style="margin:0; background:transparent; border:none;">
-            <button class="btn btn-primary" style="width: auto; margin:0; padding: 0 25px;" onclick="searchTutorials()">Search</button>
+            <button class="btn btn-primary" style="width: auto; margin:0; padding: 0 25px;">Search</button>
         </div>
     </section>
 
     <div class="dashboard-container">
         <div class="main-window">
-            <h3 id="video-title" style="margin-top:0;">Initializing Neural Link...</h3>
-            <div style="position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; background: #000;">
-                <iframe id="course-video" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" src="" allowfullscreen></iframe>
+            <h3 style="margin-top:0;">Initializing Neural Link...</h3>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #30363d;">
+                <div style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:var(--primary); font-family:monospace;">[ ENCRYPTED STREAM ]</div>
             </div>
 
             <div class="ai-grid">
@@ -177,15 +182,14 @@
         <div class="side-panel">
             <div class="side-card">
                 <h4 style="margin:0; color:var(--primary);"><i class="fas fa-satellite"></i> Live Intel</h4>
-                <p id="api-status" style="font-size: 12px; margin: 10px 0;">Connecting to Nodes...</p>
-                <div id="tech-data" style="font-family: monospace; font-size: 12px; color: var(--primary);"></div>
+                <p style="font-size: 12px; margin: 10px 0; color:var(--text-dim);">Awaiting Connection...</p>
             </div>
             <div class="side-card" style="background: linear-gradient(#1c2128, #0b0e14);">
                 <h4 style="margin:0;"><i class="fas fa-terminal"></i> Terminal</h4>
                 <p style="font-size: 11px; color: var(--text-dim); line-height: 1.8;">
-                    > Status: <span style="color:var(--primary)">Authenticated</span><br>
-                    > Encryption: AES-256<br>
-                    > Environment: Production
+                    > Status: <span style="color:var(--danger)">Locked</span><br>
+                    > Encryption: RSA-4096<br>
+                    > Authorization: Required
                 </p>
             </div>
         </div>
@@ -208,7 +212,7 @@
         </div>
         <input type="email" id="email" placeholder="Email Address">
         <input type="password" id="password" placeholder="Password">
-        <input type="password" id="confirm-password" placeholder="Confirm Password" class="reg-only">
+        <input type="password" id="confirm-password" placeholder="Confirm Password">
         
         <button id="submitBtn" class="btn btn-primary" onclick="handleAuth()">Create Account</button>
         <p style="text-align:center; font-size: 14px; color:var(--text-dim);">
@@ -261,9 +265,7 @@
             if(error) status.innerText = error.message;
             else loginSuccess(data.user);
         } else {
-            // Confirm Password Check
             if(password !== confirmPass) return status.innerText = "Passwords do not match!";
-            
             const { data, error } = await _supabase.auth.signUp({
                 email, password,
                 options: { data: { 
@@ -284,17 +286,13 @@
         const fname = user.user_metadata.first_name || "Engineer";
         const track = user.user_metadata.track || "Robotics";
 
-        // Nav UI
         document.getElementById('profile-btn').style.display = 'flex';
         document.getElementById('user-display-name').innerText = fname;
         document.getElementById('user-initial').innerText = fname[0].toUpperCase();
-
-        // Settings UI
         document.getElementById('set-name').innerText = fname + " " + (user.user_metadata.last_name || "");
         document.getElementById('set-email').innerText = user.email;
         document.getElementById('set-initial').innerText = fname[0].toUpperCase();
 
-        // Auto-load content based on trade
         document.getElementById('yt-search').value = track;
         searchTutorials();
         fetchTechAPI();
