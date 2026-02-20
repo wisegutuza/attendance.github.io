@@ -24,7 +24,6 @@
             overflow-x: hidden;
         }
 
-        /* Navigation */
         nav {
             padding: 15px 50px;
             display: flex;
@@ -42,7 +41,6 @@
 
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: -1px; display: flex; align-items: center; gap: 10px; }
 
-        /* Hero Section */
         .hero {
             height: 50vh;
             display: flex;
@@ -59,7 +57,6 @@
         .hero h1 { font-size: 3.5rem; margin-bottom: 10px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .hero p { color: var(--text-dim); max-width: 600px; font-size: 1.2rem; }
 
-        /* Auth Overlay */
         #auth-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -84,6 +81,7 @@
             width: 100%; padding: 14px; margin: 10px 0;
             background: #0d1117; border: 1px solid #30363d;
             color: white; border-radius: 10px; font-size: 16px; transition: 0.3s;
+            box-sizing: border-box;
         }
         
         input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px rgba(62, 207, 142, 0.2); }
@@ -96,8 +94,8 @@
 
         .btn-primary { background: var(--primary); color: #0b0e14; }
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Grid */
         .container { padding: 60px 50px; max-width: 1200px; margin: auto; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
 
@@ -110,14 +108,11 @@
         }
 
         .course-card:hover { transform: translateY(-10px); border-color: var(--primary); }
-
         .course-img { width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid #30363d; }
-
         .course-info { padding: 25px; }
         .course-info h3 { margin: 0 0 10px 0; color: var(--primary); }
         .course-info p { color: var(--text-dim); line-height: 1.6; font-size: 0.95rem; }
 
-        /* User Profile UI */
         #profile-bar { display: none; align-items: center; gap: 15px; background: #1c2128; padding: 8px 20px; border-radius: 40px; border: 1px solid #444c56; }
         .user-icon { background: var(--primary); color: #000; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
@@ -133,7 +128,7 @@
     <div id="profile-area">
         <div id="profile-bar">
             <div class="user-icon" id="user-initial">U</div>
-            <span id="welcome-user"></span>
+            <span id="welcome-user" style="font-weight: 600;"></span>
             <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text-dim); cursor:pointer; font-size: 18px;"><i class="fas fa-sliders-h"></i></button>
         </div>
     </div>
@@ -149,21 +144,21 @@
         <h2 style="margin-bottom: 40px; font-size: 2rem;">Available Specializations</h2>
         <div class="grid">
             <div class="course-card">
-                <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&q=80&w=800" class="course-img" alt="Embedded">
+                <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&q=80&w=800" class="course-img">
                 <div class="course-info">
                     <h3>Embedded Systems</h3>
                     <p>Learn to program the brains of modern hardware using C++ and RTOS.</p>
                 </div>
             </div>
             <div class="course-card">
-                <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800" class="course-img" alt="Robotics">
+                <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800" class="course-img">
                 <div class="course-info">
                     <h3>Robotics Mastery</h3>
                     <p>Build autonomous machines with Computer Vision and ROS2.</p>
                 </div>
             </div>
             <div class="course-card">
-                <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&q=80&w=800" class="course-img" alt="IoT">
+                <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&q=80&w=800" class="course-img">
                 <div class="course-info">
                     <h3>IoT Cloud Sync</h3>
                     <p>Connect hardware to the edge and visualize data in real-time.</p>
@@ -176,7 +171,7 @@
 <div id="auth-overlay">
     <div class="auth-card">
         <h2 id="auth-title" style="text-align:center; margin-bottom: 5px;">Join CourseBag</h2>
-        <p style="text-align:center; color: var(--text-dim); margin-bottom: 25px;">Create an account to unlock courses.</p>
+        <p style="text-align:center; color: var(--text-dim); margin-bottom: 25px;">Unlock engineering courses.</p>
         
         <div id="reg-fields">
             <div style="display:flex; gap:10px;">
@@ -196,7 +191,7 @@
         <button id="submitBtn" class="btn btn-primary" onclick="handleAuth()">Create Account</button>
         
         <p style="text-align:center; margin-top:20px; color: var(--text-dim);" id="toggle-msg">
-            Already a member? <a href="javascript:void(0)" onclick="toggleMode()" style="color:var(--primary); text-decoration: none; font-weight:600;">Login</a>
+            Already a member? <button onclick="toggleMode()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:600;">Login</button>
         </p>
         <div id="status"></div>
     </div>
@@ -206,9 +201,8 @@
     <div class="auth-card" style="text-align:center;">
         <h3>Student Settings</h3>
         <p id="settings-email" style="color:var(--text-dim); margin-bottom:20px;"></p>
-        <button class="btn" onclick="resetPassword()" style="background:#30363d; color:white;">Change Password</button>
-        <button class="btn" onclick="logout()" style="background:#ff4d4d; color:white; margin-top:10px;">Sign Out</button>
-        <button class="btn" onclick="toggleSettings()" style="background:none; color:var(--text-dim); margin-top:10px;">Return to Dashboard</button>
+        <button class="btn" onclick="logout()" style="background:#ff4d4d; color:white;">Sign Out</button>
+        <button class="btn" onclick="toggleSettings()" style="background:none; color:var(--text-dim); margin-top:10px;">Close</button>
     </div>
 </div>
 
@@ -225,55 +219,59 @@
         document.getElementById('submitBtn').innerText = isLogin ? "Sign In" : "Create Account";
         document.getElementById('reg-fields').classList.toggle('hidden');
         document.getElementById('status').innerText = "";
-        document.getElementById('toggle-msg').innerHTML = isLogin ? 
-            'New here? <a href="javascript:void(0)" onclick="toggleMode()" style="color:var(--primary); text-decoration:none; font-weight:600;">Create Account</a>' : 
-            'Already a member? <a href="javascript:void(0)" onclick="toggleMode()" style="color:var(--primary); text-decoration:none; font-weight:600;">Login</a>';
+        
+        const toggleBtnText = isLogin ? "Create Account" : "Login";
+        const msgPrefix = isLogin ? "New here? " : "Already a member? ";
+        
+        document.getElementById('toggle-msg').innerHTML = `${msgPrefix}<button onclick="toggleMode()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:600;">${toggleBtnText}</button>`;
     }
 
     async function handleAuth() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const status = document.getElementById('status');
+        const btn = document.getElementById('submitBtn');
 
         if (!email || !password) {
-            status.innerText = "Please fill in all credentials.";
+            status.innerText = "Please fill in all fields.";
             status.style.color = "#ff4d4d";
             return;
         }
 
-        if (isLogin) {
-            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-            if (error) { 
-                status.innerText = "Error: " + error.message; 
-                status.style.color = "#ff4d4d"; 
-            } else { 
-                fetchProfile(data.user.id, email); 
-            }
-        } else {
-            const { data, error } = await _supabase.auth.signUp({
-                email, password,
-                options: { 
-                    data: { 
-                        first_name: document.getElementById('fname').value,
-                        last_name: document.getElementById('lname').value,
-                        track: document.getElementById('track').value
-                    } 
-                }
-            });
-            if (error) { 
-                status.innerText = "Failed: " + error.message; 
-                status.style.color = "#ff4d4d"; 
-            } else { 
-                status.innerText = "Account ready! You can now Login."; 
-                status.style.color = var(--primary);
+        btn.disabled = true;
+        btn.innerText = "Loading...";
+
+        try {
+            if (isLogin) {
+                const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                fetchProfile(data.user.id, email);
+            } else {
+                const fname = document.getElementById('fname').value;
+                const lname = document.getElementById('lname').value;
+                const track = document.getElementById('track').value;
+
+                const { data, error } = await _supabase.auth.signUp({
+                    email, password,
+                    options: { data: { first_name: fname, last_name: lname, track: track } }
+                });
+                if (error) throw error;
+                
+                status.innerText = "Success! Please Login now.";
+                status.style.color = "#3ecf8e";
                 setTimeout(toggleMode, 1500);
             }
+        } catch (err) {
+            status.innerText = err.message;
+            status.style.color = "#ff4d4d";
+        } finally {
+            btn.disabled = false;
+            btn.innerText = isLogin ? "Sign In" : "Create Account";
         }
     }
 
     async function fetchProfile(uid, email) {
-        // We select first_name and 'gender' (where we stored the track interest)
-        const { data } = await _supabase.from('attendance').select('first_name, gender').eq('id', uid).single();
+        const { data, error } = await _supabase.from('attendance').select('first_name, gender').eq('id', uid).single();
         if (data) {
             document.getElementById('auth-overlay').classList.add('hidden');
             document.getElementById('main-content').classList.remove('blur');
@@ -281,21 +279,13 @@
             document.getElementById('welcome-user').innerText = data.first_name;
             document.getElementById('user-initial').innerText = data.first_name[0].toUpperCase();
             document.getElementById('settings-email').innerText = email;
+        } else {
+            document.getElementById('status').innerText = "Profile loading... please wait 2 seconds and try again.";
         }
     }
 
     function toggleSettings() { document.getElementById('settings-overlay').classList.toggle('hidden'); }
-
-    async function resetPassword() {
-        const email = document.getElementById('settings-email').innerText;
-        await _supabase.auth.resetPasswordForEmail(email);
-        alert("A password reset link has been sent to your email!");
-    }
-
-    async function logout() {
-        await _supabase.auth.signOut();
-        location.reload();
-    }
+    async function logout() { await _supabase.auth.signOut(); location.reload(); }
 </script>
 </body>
 </html>
