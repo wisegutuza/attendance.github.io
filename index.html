@@ -3,156 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance | Management System</title>
+    <title>Attendance Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --primary: #4361ee;
-            --bg: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-main: #2b2d42;
-            --text-muted: #6c757d;
-            --border: #e0e6ed;
-        }
-
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { margin: 0; background: var(--bg); display: flex; justify-content: center; align-items: flex-start; padding-top: 50px; }
-
-        .form-container { 
-            width: 100%; 
-            max-width: 700px; 
-            background-color: white; 
-            padding: 30px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            border-radius: 16px; 
-            margin: 20px;
-        }
-
-        .form-title { font-size: 1rem; margin-bottom: 25px; color: var(--text-muted); line-height: 1.4; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
-        label sup { color: red; margin-left: 3px; }
-
-        input, select { 
-            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; font-size: 0.9rem; background: #fafafa;
-        }
-        input:focus { outline: none; border-color: var(--primary); background: #fff; }
-
-        .radio-group { display: flex; gap: 20px; margin-top: 5px; }
-        .radio-group label { font-weight: normal; display: flex; align-items: center; margin-bottom: 0; }
-        .radio-group input { margin-right: 8px; width: auto; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: span 2; }
-
-        button { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.3s; }
-        button:disabled { background: #cccccc; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        
+        button { width: 100%; padding: 14px; margin-top: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; transition: 0.3s; display: flex; justify-content: center; align-items: center; }
+        .btn-primary { background: #3ecf8e; color: white; }
+        .btn-primary:disabled { background: #a7e7c9; cursor: not-allowed; }
+        
+        .hidden { display: none; }
+        
+        /* Loading Spinner */
+        .spinner { border: 3px solid rgba(255, 255, 255, 0.3); width: 18px; height: 18px; border-radius: 50%; border-left-color: #ffffff; animation: spin 1s linear infinite; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #status { margin-top: 20px; font-size: 14px; min-height: 20px; }
+        .error { color: #ff4d4d; }
+        .success { color: #3ecf8e; }
     </style>
 </head>
 <body>
 
-    <div class="form-container">
-        <h1 style="color: black; margin-bottom: 15px; font-size: 2.2rem;">Attendance System</h1>
-        <p class="form-title">Please fill out all required information below to record attendance.</p>
+<div class="card">
+    <div id="auth-section">
+        <h2 id="title">Join Attendance</h2>
         
-        <!-- Form action removed as we handle submission with JS now -->
-        <form id="attendanceForm">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="fname">First Name <sup>*</sup></label>
-                    <input type="text" name="First Name" id="fname" placeholder="Enter first name" required>
-                </div>
+        <div id="reg-fields">
+            <input type="text" id="fname" placeholder="First Name">
+            <input type="text" id="lname" placeholder="Last Name">
+            <select id="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
 
-                <div class="form-group">
-                    <label for="lname">Last Name <sup>*</sup></label>
-                    <input type="text" name="Last Name" id="lname" placeholder="Enter last name" required>
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="email">Email Address <sup>*</sup></label>
-                    <input type="email" name="Email" id="email" placeholder="Enter email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Gender <sup>*</sup></label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="Gender" value="Male" required> Male</label>
-                        <label><input type="radio" name="Gender" value="Female"> Female</label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="age">Age</label>
-                    <input type="number" name="Age" id="age" placeholder="e.g., 30" min="18">
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">Phone Number <sup>*</sup></label>
-                    <input type="tel" name="Phone" id="phone" placeholder="+1 (555) 000-0000" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="id_nbr">ID Number <sup>*</sup></label>
-                    <input type="text" name="ID Number" id="id_nbr" placeholder="Enter national ID" required>
-                </div>
-                
-                <div class="form-group full-width">
-                    <button type="submit" id="submitBtn">Submit</button>
-                </div>
-            </div>
-        </form>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        
+        <button id="submitBtn" class="btn-primary" onclick="handleAuth()">
+            <div id="btn-loader" class="spinner hidden"></div>
+            <span id="btn-text">Register & Join</span>
+        </button>
+        
+        <p id="toggle-msg">Already have an account? <a href="javascript:void(0)" onclick="toggleMode()">Login here</a></p>
     </div>
 
-    <!-- 1. Add Supabase Library (Corrected CDN URL) -->
-    <script src="https://cdn.jsdelivr.net"></script>
+    <div id="welcome-section" class="hidden">
+        <h1 id="welcome-name" style="color: #3ecf8e; margin-bottom: 5px;"></h1>
+        <p style="font-size: 18px; color: #555;">Welcome back!!!</p>
+        <p>You have successfully logged in to the portal.</p>
+        <button class="btn-primary" onclick="location.reload()" style="background: #ff4d4d; margin-top: 30px;">Logout</button>
+    </div>
 
-    <script>
-        // 2. Initialize Supabase Client
-        const supabaseUrl = 'https://mkkfwraukjmqeqmvgdva.supabase.co';
-        const supabaseKey = 'sb_publishable_JVEDnDIXv6LZB4n5Qh3yMg_76XA5NJw';
-        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    <p id="status"></p>
+</div>
 
-        const form = document.getElementById("attendanceForm");
-        const button = document.getElementById("submitBtn");
+<script>
+    // Project Configuration
+    const supabaseUrl = 'https://mkkfwraukjmqeqmvgdva.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ra2Z3cmF1a2ptcWVxbXZnZHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzOTAwNDMsImV4cCI6MjA4NTk2NjA0M30.KZ9JnF4p6VazX0dsKRPJA6JAIobaFjEY3o8W9NK_BBY';
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        form.addEventListener("submit", async (e) => {
-            // e.preventDefault() stops the URL issue you were having
-            e.preventDefault(); 
-            button.disabled = true;
-            button.textContent = "Saving to Database...";
+    let isLogin = false;
 
-            // 3. Collect Data
-            const formData = new FormData(form);
-            const submissionData = {
-                first_name: formData.get("First Name"),
-                last_name: formData.get("Last Name"),
-                email: formData.get("Email"),
-                gender: formData.get("Gender"),
-                age: parseInt(formData.get("Age")),
-                phone: formData.get("Phone"),
-                id_number: formData.get("ID Number")
-            };
+    // Toggle between Register and Login
+    function toggleMode() {
+        isLogin = !isLogin;
+        document.getElementById('title').innerText = isLogin ? "Login" : "Join Attendance";
+        document.getElementById('btn-text').innerText = isLogin ? "Login Now" : "Register & Join";
+        document.getElementById('reg-fields').classList.toggle('hidden');
+        document.getElementById('status').innerText = "";
+        document.getElementById('toggle-msg').innerHTML = isLogin ? 
+            'Need an account? <a href="javascript:void(0)" onclick="toggleMode()">Register here</a>' : 
+            'Already have an account? <a href="javascript:void(0)" onclick="toggleMode()">Login here</a>';
+    }
 
-            try {
-                // 4. Send ONLY to Supabase
-                const { error } = await _supabase
-                    .from('attendance')
-                    .insert([submissionData]);
+    // Main Auth Handler
+    async function handleAuth() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const btn = document.getElementById('submitBtn');
+        const loader = document.getElementById('btn-loader');
+        const btnText = document.getElementById('btn-text');
+        const status = document.getElementById('status');
 
-                if (error) throw error;
+        if (!email || !password) {
+            status.className = "error";
+            status.innerText = "Please fill in all fields.";
+            return;
+        }
 
-                // Success Alert 
-                alert("Attendance recorded successfully!");
-                form.reset();
+        // LOADING START
+        btn.disabled = true;
+        loader.classList.remove('hidden');
+        btnText.innerText = "Processing...";
+        status.innerText = "";
 
-            } catch (error) {
-                console.error("Error:", error);
-                // Error Alert 
-                alert("Error saving data: " + error.message);
-            } finally {
-                button.disabled = false;
-                button.textContent = "Submit";
+        if (isLogin) {
+            // --- LOGIN LOGIC ---
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+            
+            if (error) {
+                status.className = "error";
+                status.innerText = error.message;
+                resetButton();
+            } else {
+                fetchUserData(data.user.id);
             }
-        });
-    </script>
+        } else {
+            // --- REGISTRATION LOGIC ---
+            const { data, error } = await _supabase.auth.signUp({
+                email, password,
+                options: {
+                    data: {
+                        first_name: document.getElementById('fname').value,
+                        last_name: document.getElementById('lname').value,
+                        gender: document.getElementById('gender').value
+                    }
+                }
+            });
+
+            if (error) {
+                status.className = "error";
+                status.innerText = error.message;
+                resetButton();
+            } else {
+                status.className = "success";
+                status.innerText = "Success! Now switch to Login and enter your details.";
+                resetButton();
+                // Automatically switch to login mode for the user
+                setTimeout(toggleMode, 2000); 
+            }
+        }
+    }
+
+    function resetButton() {
+        const btn = document.getElementById('submitBtn');
+        const loader = document.getElementById('btn-loader');
+        const btnText = document.getElementById('btn-text');
+        
+        btn.disabled = false;
+        loader.classList.add('hidden');
+        btnText.innerText = isLogin ? "Login Now" : "Register & Join";
+    }
+
+    async function fetchUserData(uid) {
+        // Fetch the name from your 'attendance' table using the User ID
+        const { data, error } = await _supabase
+            .from('attendance')
+            .select('first_name')
+            .eq('id', uid)
+            .single();
+
+        if (data) {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('welcome-section').classList.remove('hidden');
+            document.getElementById('welcome-name').innerText = `Welcome, ${data.first_name}!!!`;
+            document.getElementById('status').innerText = "";
+        } else {
+            // If the trigger failed or row isn't there yet
+            document.getElementById('status').className = "error";
+            document.getElementById('status').innerText = "Logged in, but could not find your profile in the attendance table.";
+            resetButton();
+        }
+    }
+</script>
 </body>
 </html>
