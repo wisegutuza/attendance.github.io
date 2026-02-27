@@ -3,144 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CourseBag | Engineering & AI Portal</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>CourseBag | The Engineering Standard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary: #00cf7f;
             --google-blue: #4285F4;
-            --bg: #f8f9fa;
+            --text-main: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --bg-light: #ffffff;
+            --bg-card: #f5f5f7;
         }
 
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #1a1a1a; transition: 0.5s; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            margin: 0; padding: 0; background: var(--bg-light); color: var(--text-main);
+            line-height: 1.5;
+        }
 
-        /* --- Dynamic One-Tap --- */
+        /* --- NAVIGATION --- */
+        nav {
+            padding: 20px 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: fixed; width: 100%; top: 0; z-index: 1000;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);
+            box-sizing: border-box; border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .logo { font-size: 22px; font-weight: 800; color: #000; letter-spacing: -1px; }
+
+        /* --- GOOGLE POPUP (DYNAMIC) --- */
         #google-one-tap {
-            position: fixed; top: 20px; right: 20px; width: 320px;
+            position: fixed; top: 85px; right: 60px; width: 320px;
             background: #fff; border-radius: 12px; border: 1px solid #dadce0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 16px; z-index: 3000;
-            display: none; /* Hidden until email is entered */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 16px; z-index: 2000;
+            display: none; /* Only shows after email entry */
+            animation: slideDown 0.4s ease-out;
         }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- Hero Design --- */
-        .hero { padding: 150px 20px; text-align: center; max-width: 900px; margin: auto; }
-        .hero h1 { font-size: 3.8rem; letter-spacing: -2px; margin-bottom: 20px; }
-        .hero span { color: var(--google-blue); }
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 160px 20px 80px; text-align: center; max-width: 900px; margin: auto;
+        }
+        .hero h1 { font-size: 4rem; line-height: 1.1; margin-bottom: 20px; font-weight: 800; letter-spacing: -3px; }
+        .hero h1 span { color: var(--google-blue); }
+        .hero p { font-size: 1.4rem; color: var(--text-secondary); margin-bottom: 40px; }
 
-        /* --- The Entry Box --- */
-        .entry-container {
-            background: white; padding: 10px; border-radius: 50px;
-            display: flex; border: 1px solid #ddd; max-width: 500px; margin: 40px auto;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        /* --- INPUT BOX --- */
+        .entry-box {
+            display: flex; background: #f1f1f1; padding: 8px; border-radius: 50px;
+            max-width: 500px; margin: 0 auto 50px; border: 1px solid #e0e0e0;
         }
-        .entry-container input {
-            flex: 1; border: none; outline: none; padding-left: 20px; font-size: 16px;
+        .entry-box input {
+            flex: 1; border: none; background: transparent; padding: 0 20px; font-size: 16px; outline: none;
         }
-        .btn-go {
-            background: #000; color: #fff; border: none; padding: 12px 30px;
-            border-radius: 40px; font-weight: 700; cursor: pointer;
-        }
+        .btn { padding: 14px 28px; border-radius: 50px; font-weight: 700; cursor: pointer; border: none; transition: 0.3s; }
+        .btn-black { background: #000; color: #fff; }
 
-        /* --- Hidden Dashboard --- */
+        /* --- COURSE GRID --- */
+        .grid-container { padding: 0 60px 100px; max-width: 1300px; margin: auto; }
+        .course-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;
+        }
+        .course-card {
+            background: var(--bg-card); border-radius: 24px; overflow: hidden;
+            transition: 0.4s; border: 1px solid transparent;
+        }
+        .course-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        .course-card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-content { padding: 25px; }
+        .card-content h3 { margin: 0 0 10px; font-size: 20px; }
+        .card-content p { color: var(--text-secondary); font-size: 14px; }
+
+        /* --- DASHBOARD VIEW (HIDDEN INITIALLY) --- */
         #dashboard {
-            display: none; padding: 100px 50px; text-align: center;
-            background: #fff; min-height: 100vh;
+            display: none; padding: 120px 60px; text-align: center;
         }
-
-        .welcome-badge {
-            background: rgba(0,207,127,0.1); color: var(--primary);
-            padding: 8px 20px; border-radius: 20px; font-weight: 700; display: inline-block;
-        }
-
+        .welcome-msg { font-size: 3rem; font-weight: 800; margin-bottom: 10px; }
+        
         .hidden { display: none !important; }
+
     </style>
 </head>
 <body>
 
-<div id="welcome-index">
-    <div class="hero">
-        <h1>Advanced <span>Learning</span> for Modern Engineers.</h1>
-        <p>Enter your professional email to sync your laboratory profile.</p>
-        
-        <div class="entry-container">
-            <input type="email" id="user-email" placeholder="Your Gmail address...">
-            <button class="btn-go" onclick="syncUser()">Get Started</button>
+<nav>
+    <div class="logo">CourseBag</div>
+    <div id="nav-auth" class="hidden">
+        <span id="nav-user-email" style="font-weight: 600; margin-right: 20px; font-size: 14px;"></span>
+        <button class="btn btn-black" style="padding: 8px 20px;" onclick="location.reload()">Log Out</button>
+    </div>
+</nav>
+
+<div id="google-one-tap">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_Icons_2020.svg" width="18">
+            <span style="font-size:13px; font-weight:500; color:#3c4043;">Continue with Google</span>
+        </div>
+        <i class="fas fa-times" style="cursor:pointer; color:#ccc;" onclick="this.parentElement.parentElement.style.display='none'"></i>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px; padding:10px; border-radius:8px; cursor:pointer; background: #f8f9fa;" onclick="enterLab()">
+        <div id="user-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold;">?</div>
+        <div>
+            <div id="user-name" style="font-size:14px; font-weight:600;">Detecting...</div>
+            <div id="user-email-display" style="font-size:12px; color:#70757a;">email@gmail.com</div>
         </div>
     </div>
 </div>
 
-<div id="google-one-tap">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <span style="font-size:12px; font-weight:600; color:#5f6368;">Continue to CourseBag</span>
-        <i class="fas fa-times" style="cursor:pointer;" onclick="closePopup()"></i>
+<div id="index-view">
+    <div class="hero">
+        <h1>The World’s <span>Best Engineers</span><br>Build Here.</h1>
+        <p>Access professional training in AI, Robotics, and IoT Ecosystems.</p>
+        
+        <div class="entry-box">
+            <input type="email" id="entry-email" placeholder="Enter your Gmail to sync lab profile...">
+            <button class="btn btn-black" onclick="syncProfile()">Sync Profile</button>
+        </div>
     </div>
-    <div style="display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="enterDashboard()">
-        <div id="user-initial" style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:20px;">?</div>
-        <div>
-            <div id="display-name" style="font-size:14px; font-weight:600;">Detecting Name...</div>
-            <div id="display-email" style="font-size:12px; color:#70757a;">email@example.com</div>
+
+    <div class="grid-container">
+        <h2 style="margin-bottom: 40px; font-size: 32px; letter-spacing: -1px;">Explore Modules</h2>
+        <div class="course-grid">
+            <div class="course-card">
+                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80">
+                <div class="card-content">
+                    <h3>Generative AI & LLMs</h3>
+                    <p>Master Transformer architectures and fine-tune models for engineering automation.</p>
+                </div>
+            </div>
+            <div class="course-card">
+                <img src="https://images.unsplash.com/photo-1531746790731-6c087fecd05a?auto=format&fit=crop&w=600&q=80">
+                <div class="card-content">
+                    <h3>Autonomous Robotics</h3>
+                    <p>Path planning and sensor fusion for mobile industrial robots using ROS2.</p>
+                </div>
+            </div>
+            <div class="course-card">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80">
+                <div class="card-content">
+                    <h3>IoT Architecture</h3>
+                    <p>Design scalable device clouds and secure MQTT communication protocols.</p>
+                </div>
+            </div>
+            <div class="course-card">
+                <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&w=600&q=80">
+                <div class="card-content">
+                    <h3>Edge AI Computing</h3>
+                    <p>Running neural networks on ultra-low-power microcontrollers (STM32).</p>
+                </div>
+            </div>
+            <div class="course-card">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80">
+                <div class="card-content">
+                    <h3>Industrial SecOps</h3>
+                    <p>Protecting critical hardware infrastructure from edge-to-cloud vulnerabilities.</p>
+                </div>
+            </div>
+            <div class="course-card">
+                <img src="https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=600&q=80">
+                <div class="card-content">
+                    <h3>Computer Vision</h3>
+                    <p>Advanced CNNs and GANs for real-world visual inspection and tracking.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <div id="dashboard">
-    <div class="welcome-badge">ACTIVE SESSION</div>
-    <h1 id="dash-welcome">Welcome back, User!</h1>
-    <p>Your AI & Robotics curriculum is ready for deployment.</p>
-    <hr style="width:50px; border: 2px solid var(--primary); margin: 30px auto;">
+    <div style="color: var(--primary); font-weight: 800; font-size: 14px; letter-spacing: 2px;">ACCESS GRANTED</div>
+    <h1 class="welcome-msg">Welcome back, <span id="dash-name">Engineer</span>!</h1>
+    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 50px;">Your labs are online. Continue where you left off in your professional tracks.</p>
     
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; max-width:1000px; margin:50px auto;">
-        <div style="padding:40px; border:1px solid #eee; border-radius:20px;">
-            <i class="fas fa-microchip" style="font-size:30px; color:var(--primary);"></i>
-            <h3>Hardware Lab</h3>
+    <div class="course-grid">
+        <div class="course-card" style="background: #fff; padding: 40px; text-align: left;">
+            <i class="fas fa-bolt" style="color: var(--primary); font-size: 24px;"></i>
+            <h3>Active Course: ROS2</h3>
+            <div style="width: 100%; background: #eee; height: 8px; border-radius: 10px; margin-top: 15px;">
+                <div style="width: 65%; background: var(--primary); height: 100%; border-radius: 10px;"></div>
+            </div>
+            <p style="font-size: 12px; margin-top: 10px;">65% Completed</p>
         </div>
-        <div style="padding:40px; border:1px solid #eee; border-radius:20px;">
-            <i class="fas fa-brain" style="font-size:30px; color:var(--google-blue);"></i>
-            <h3>Neural Training</h3>
         </div>
-        <div style="padding:40px; border:1px solid #eee; border-radius:20px;">
-            <i class="fas fa-code-branch" style="font-size:30px; color:purple;"></i>
-            <h3>Edge Deploy</h3>
-        </div>
-    </div>
 </div>
 
 <script>
-    function syncUser() {
-        const email = document.getElementById('user-email').value;
+    function syncProfile() {
+        const email = document.getElementById('entry-email').value;
         if(!email || !email.includes('@')) {
-            alert("Please enter a valid email to sync.");
+            alert("Please enter a valid Gmail address.");
             return;
         }
 
-        // 1. Extract Name from Email (e.g., "john" from "john@gmail.com")
-        const namePart = email.split('@')[0];
-        const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+        // Logic to extract name from email
+        const nameRaw = email.split('@')[0];
+        const nameFormatted = nameRaw.charAt(0).toUpperCase() + nameRaw.slice(1);
 
-        // 2. Update the Google Pop-up Dynamically
-        document.getElementById('display-name').innerText = formattedName;
-        document.getElementById('display-email').innerText = email;
-        document.getElementById('user-initial').innerText = formattedName.charAt(0);
+        // Update Google Popup
+        document.getElementById('user-name').innerText = nameFormatted;
+        document.getElementById('user-email-display').innerText = email;
+        document.getElementById('user-avatar').innerText = nameFormatted.charAt(0);
         
-        // 3. Show the Pop-up
+        // Show Popup
         document.getElementById('google-one-tap').style.display = 'block';
     }
 
-    function enterDashboard() {
-        const name = document.getElementById('display-name').innerText;
-        
-        // Hide Welcome, Show Dashboard
-        document.getElementById('welcome-index').classList.add('hidden');
-        document.getElementById('google-one-tap').classList.add('hidden');
+    function enterLab() {
+        const name = document.getElementById('user-name').innerText;
+        const email = document.getElementById('user-email-display').innerText;
+
+        // Transition views
+        document.getElementById('index-view').classList.add('hidden');
+        document.getElementById('google-one-tap').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
         
-        // Personalize the Dashboard
-        document.getElementById('dash-welcome').innerText = "Welcome back, " + name + "!";
-    }
+        // Update Nav & Dash
+        document.getElementById('nav-auth').classList.remove('hidden');
+        document.getElementById('nav-user-email').innerText = email;
+        document.getElementById('dash-name').innerText = name;
 
-    function closePopup() {
-        document.getElementById('google-one-tap').style.display = 'none';
+        window.scrollTo(0, 0);
     }
 </script>
 
